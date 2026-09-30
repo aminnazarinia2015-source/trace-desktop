@@ -1,0 +1,10 @@
+dialog{width:min(440px,calc(100% - 30px));border:1px solid #31535a;border-radius:17px;background:#0b2930;color:#eaf5f6;padding:0;box-shadow:0 30px 90px #0009}
+dialog::backdrop{background:#02090bd9;backdrop-filter:blur(6px)}
+dialog form{padding:28px;position:relative}dialog h2{margin:13px 0 10px}.close{position:absolute;right:14px;top:9px;background:transparent;color:#9cb3b8;font-size:28px;padding:4px}
+.dialog-intro{margin:0 0 20px;color:#a8bec2;font-size:12.5px;line-height:1.55}
+label{display:block;color:#a8bec2;font-size:12px;margin:15px 0}input{display:block;width:100%;margin-top:7px;padding:12px;border-radius:9px;border:1px solid #34555c;background:#071b20;color:#fff;font-size:15px}
+#project-id{width:min(260px,100%);margin:0;padding:12px;border-radius:9px;border:1px solid #34555c;background:#071b20;color:#fff}#signin-submit{width:100%;margin-top:6px}#signin-error{color:#ffb3a8;min-height:18px;font-size:12px}
+.checkbox-row{display:flex;align-items:center;gap:8px;font-size:12px;color:#a8bec2}
+.checkbox-row input{display:inline-block;width:auto;margin:0}
+#backup-passphrase-submit{width:100%;margin-top:6px}
+#backup-error{color:#ffb3a8;min-height:18px;font-size:12px}
