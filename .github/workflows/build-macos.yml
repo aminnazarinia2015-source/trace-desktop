@@ -20,33 +20,22 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build & sign macOS installer
+      - name: Import Developer ID certificate into keychain
+        if: ${{ secrets.CSC_LINK != '' }}
+        uses: apple-actions/import-codesign-certs@v3
+        with:
+          p12-file-base64: ${{ secrets.CSC_LINK }}
+          p12-password: ${{ secrets.CSC_KEY_PASSWORD }}
+
+      - name: Build macOS installer
         env:
-          # Code-signing cert (base64-encoded .p12) -- optional. Without it,
-          # electron-builder produces an UNSIGNED build: Gatekeeper will block
-          # it on any other Mac until the user right-click > Open's it once.
-          CSC_LINK: ${{ secrets.CSC_LINK }}
-          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
-          # Notarization -- optional, requires an Apple Developer Program
-          # membership. Without these three, the build is signed (if CSC_LINK
-          # is set) but NOT notarized, so Gatekeeper still blocks it as
-          # "cannot be verified" the first time it's opened.
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          CSC_IDENTITY_AUTO_DISCOVERY: false
         run: |
-          # GitHub sets these env vars to an EMPTY STRING when the secret
-          # doesn't exist yet, not "unset" -- and electron-builder treats a
-          # defined-but-empty CSC_LINK as a literal (invalid) file path, which
-          # fails the whole build. Unset them here when empty so an unsigned
-          # build proceeds cleanly until real secrets are added.
-          if [ -z "$CSC_LINK" ]; then
-            unset CSC_LINK CSC_KEY_PASSWORD
-            echo "No CSC_LINK secret set -- building an UNSIGNED macOS app (Gatekeeper will warn on other Macs)."
-          fi
           if [ -z "$APPLE_ID" ]; then
             unset APPLE_ID APPLE_APP_SPECIFIC_PASSWORD APPLE_TEAM_ID
+            echo "No Apple ID secrets set -- build will be signed if a certificate was imported, but NOT notarized."
           fi
           npm run dist:macos
 
