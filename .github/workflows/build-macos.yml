@@ -35,7 +35,20 @@ jobs:
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           CSC_IDENTITY_AUTO_DISCOVERY: false
-        run: npm run dist:macos
+        run: |
+          # GitHub sets these env vars to an EMPTY STRING when the secret
+          # doesn't exist yet, not "unset" -- and electron-builder treats a
+          # defined-but-empty CSC_LINK as a literal (invalid) file path, which
+          # fails the whole build. Unset them here when empty so an unsigned
+          # build proceeds cleanly until real secrets are added.
+          if [ -z "$CSC_LINK" ]; then
+            unset CSC_LINK CSC_KEY_PASSWORD
+            echo "No CSC_LINK secret set -- building an UNSIGNED macOS app (Gatekeeper will warn on other Macs)."
+          fi
+          if [ -z "$APPLE_ID" ]; then
+            unset APPLE_ID APPLE_APP_SPECIFIC_PASSWORD APPLE_TEAM_ID
+          fi
+          npm run dist:macos
 
       - name: Upload macOS installer
         uses: actions/upload-artifact@v4
