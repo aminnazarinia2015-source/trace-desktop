@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: macos-latest
+    env:
+      HAS_CSC: ${{ secrets.CSC_LINK != '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,7 +23,7 @@ jobs:
         run: npm install
 
       - name: Import Developer ID certificate into keychain
-        if: ${{ secrets.CSC_LINK != '' }}
+        if: env.HAS_CSC == 'true'
         uses: apple-actions/import-codesign-certs@v3
         with:
           p12-file-base64: ${{ secrets.CSC_LINK }}
