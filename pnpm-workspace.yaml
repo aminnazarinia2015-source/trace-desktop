@@ -1,0 +1,9 @@
+allowBuilds:
+  electron-winstaller: true
+packages:
+  - .
+
+onlyBuiltDependencies:
+  - app-builder-bin
+  - electron
+  - electron-winstaller
