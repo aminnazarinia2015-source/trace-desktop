@@ -29,7 +29,7 @@ jobs:
           p12-file-base64: ${{ secrets.CSC_LINK }}
           p12-password: ${{ secrets.CSC_KEY_PASSWORD }}
 
-      - name: Build macOS installer
+      - name: Build macOS installer (dmg only)
         env:
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
@@ -39,7 +39,13 @@ jobs:
             unset APPLE_ID APPLE_APP_SPECIFIC_PASSWORD APPLE_TEAM_ID
             echo "No Apple ID secrets set -- build will be signed if a certificate was imported, but NOT notarized."
           fi
-          npm run dist:macos
+          # NOTE: .pkg is intentionally NOT built here. A .pkg installer needs a separate
+          # "Developer ID Installer" certificate (used with productsign) -- different from
+          # the "Developer ID Application" certificate used to sign the .app/.dmg. We only
+          # have the Application certificate today, so notarization of a .pkg fails with
+          # "The binary is not signed." The .dmg signs and notarizes cleanly with what we
+          # have, and is the standard distribution format outside the Mac App Store anyway.
+          npx electron-builder --mac dmg
 
       - name: Upload macOS installer
         uses: actions/upload-artifact@v4
@@ -47,7 +53,6 @@ jobs:
           name: TRACE-Desktop-macos-installer
           path: |
             dist/*.dmg
-            dist/*.pkg
           retention-days: 30
 
       - name: Attach to GitHub Release
@@ -56,4 +61,3 @@ jobs:
         with:
           files: |
             dist/*.dmg
-            dist/*.pkg
