@@ -1,0 +1,55 @@
+name: Build & Sign macOS Installer
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build & sign macOS installer
+        env:
+          # Code-signing cert (base64-encoded .p12) -- optional. Without it,
+          # electron-builder produces an UNSIGNED build: Gatekeeper will block
+          # it on any other Mac until the user right-click > Open's it once.
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+          # Notarization -- optional, requires an Apple Developer Program
+          # membership. Without these three, the build is signed (if CSC_LINK
+          # is set) but NOT notarized, so Gatekeeper still blocks it as
+          # "cannot be verified" the first time it's opened.
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+        run: npm run dist:macos
+
+      - name: Upload macOS installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: TRACE-Desktop-macos-installer
+          path: |
+            dist/*.dmg
+            dist/*.pkg
+          retention-days: 30
+
+      - name: Attach to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.dmg
+            dist/*.pkg
