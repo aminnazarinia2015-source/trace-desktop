@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'">
+  <title>TRACE Desktop</title>
+  <link rel="stylesheet" href="app.css"><link rel="stylesheet" href="auth.css">
+</head>
+<body>
+<div class="ambient" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div class="connectivity-badge" id="connectivity-badge" role="status" aria-live="polite"><span class="dot" id="connectivity-dot"></span><span id="connectivity-text">Checking connection…</span></div>
+<main class="shell">
+  <header class="topline">
+    <div class="brand-compact"><img class="mark" src="../build/icon.png" alt=""><b>TRACE Desktop</b></div>
+    <p class="tagline" id="rotating-quote">&ldquo;Every plan. Every detail. Connected.&rdquo;</p>
+  </header>
+  <section class="states">
+    <article><span class="label">Local workspace</span><b id="workspace">Checking encryption…</b><small id="workspace-detail">No protected content is shown until the key boundary is available.</small></article>
+    <article><span class="label">TRACE Server</span><b id="server">Checking connection…</b><small id="server-detail">The client never connects directly to the database or providers.</small></article>
+    <article><span class="label">Synchronization</span><b id="sync">Checking queue…</b><small id="sync-detail">Consequential actions always require current server authority.</small></article>
+  </section>
+  <section class="action-groups">
+    <div class="action-group">
+      <b>Full live workspace</b>
+      <small>The complete TRACE site, same as your browser. Requires an internet connection. Works with any account, including a platform admin login.</small>
+      <div class="action-row">
+        <button id="open-workspace">Open TRACE workspace</button>
+        <button class="secondary" id="open-server">Open in default browser</button>
+      </div>
+    </div>
+    <div class="action-group">
+      <b>Offline drafting on this device</b>
+      <small>A one-time sign-in that lets THIS device queue daily reports, timecards, quality checks, and plan markups with no connection, then syncs automatically once you're back online. Requires an active customer account (City, CM, or contractor) — not a platform admin login.</small>
+      <div class="action-row">
+        <button id="enroll">Enable offline drafting</button>
+        <select id="project-id" aria-label="Project"><option value="">Select project</option></select>
+        <button id="sync-now">Sync now</button>
+      </div>
+      <small id="safety-hint" class="hint-line"></small>
+    </div>
+  </section>
+  <div class="version-row"><span id="version"></span></div>
+  <details class="safety-details">
+    <summary>Security &amp; device data</summary>
+    <div class="safety-body">
+      <p>The online workspace runs in a sandboxed, same-origin-only window with no Node.js access. Offline records use an OS-protected device key and AES-256-GCM. Revocation wipe-on-contact is implemented but not yet independently verified end-to-end — treat a revoked device as untrusted until confirmed, not as automatically wiped.</p>
+      <p class="danger-text">Lost or revoked this device? Automatic server-triggered wipe is not yet fully verified. If this device is compromised, lost, or you cannot confirm a revoke reached it, erase its local encrypted data manually now — this cannot be undone and does not require a network connection.</p>
+      <button class="danger" id="erase-local-data">Erase this device's local data</button>
+    </div>
+  </details>
+</main>
+<dialog id="signin"><form method="dialog"><button class="close" value="cancel" aria-label="Close">×</button><span class="eyebrow">Offline drafting on this device</span><h2>Sign in to enroll this device</h2><p class="dialog-intro">This authenticates THIS device with TRACE so it can queue offline drafts and sync them later. It's separate from just opening the live workspace, and requires an active customer account (City, CM, or contractor) — platform admin accounts can't enroll a device.</p><label>Work email<input id="email" type="email" autocomplete="username" required></label><label>Password<input id="password" type="password" autocomplete="current-password" required></label><p id="signin-error"></p><button id="signin-submit" value="default">Sign in securely</button></form></dialog>
+<dialog id="erase-confirm"><form method="dialog"><button class="close" value="cancel" aria-label="Close">×</button><span class="eyebrow">Irreversible, local-only action</span><h2>Erase this device's local data?</h2><p>This permanently deletes the encrypted workspace file and device key on this computer, including any queued offline drafts that have not yet synced. It does not affect the TRACE server or other devices.</p><p id="erase-error"></p><button id="erase-confirm-submit" class="danger" value="default">Erase now</button></form></dialog>
+<script src="app.js"></script>
+</body>
+</html>
