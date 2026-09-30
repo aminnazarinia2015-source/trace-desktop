@@ -21,6 +21,7 @@
           "appId": "com.zecocm.desktop",
           "productName": "TRACE Desktop",
           "asar": true,
+          "publish": null,
           "files": ["src/**/*", "renderer/**/*", "build/icon.png", "package.json"],
           "directories": {"output": "dist"},
           "artifactName": "TRACE-Desktop-${version}.${ext}",
