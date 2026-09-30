@@ -1,0 +1,52 @@
+{
+    "name": "trace-desktop",
+    "version": "1.0.0",
+    "private": true,
+    "description": "TRACE Desktop for Windows and macOS",
+    "author": "TRACE Management System",
+    "main": "src/main.cjs",
+    "scripts": {
+          "start": "electron .",
+          "check": "node --check src/main.cjs && node --check src/preload.cjs && node --check src/encrypted-store.cjs && node --check src/client-core.cjs && node --check renderer/app.js",
+          "test": "node --test test/*.test.cjs",
+          "dist:windows": "electron-builder --win nsis",
+          "dist:macos": "electron-builder --mac dmg pkg"
+    },
+    "devDependencies": {
+          "electron": "44.0.0",
+          "electron-builder": "26.15.3"
+    },
+    "dependencies": {},
+    "build": {
+          "appId": "com.zecocm.desktop",
+          "productName": "TRACE Desktop",
+          "asar": true,
+          "files": ["src/**/*", "renderer/**/*", "build/icon.png", "package.json"],
+          "directories": {"output": "dist"},
+          "artifactName": "TRACE-Desktop-${version}.${ext}",
+          "win": {
+                  "target": ["nsis"],
+                  "icon": "build/icon.png",
+                  "azureSignOptions": {
+                            "publisherName": "Zeco CM LLC",
+                            "endpoint": "https://eus.codesigning.azure.net/",
+                            "certificateProfileName": "TRACEDesktopSigning",
+                            "codeSigningAccountName": "zecotracesigning"
+                  }
+          },
+          "mac": {"target": ["dmg", "pkg"], "icon": "build/icon.png", "hardenedRuntime": true, "category": "public.app-category.business"},
+          "linux": {"icon": "build/icon.png"},
+          "nsis": {
+                  "oneClick": true,
+                  "perMachine": false,
+                  "runAfterFinish": true,
+                  "createDesktopShortcut": "always",
+                  "createStartMenuShortcut": true,
+                  "shortcutName": "TRACE Desktop",
+                  "installerIcon": "build/icon.ico",
+                  "uninstallerIcon": "build/icon.ico",
+                  "include": "build/installer.nsh",
+                  "deleteAppDataOnUninstall": false
+          }
+    }
+}
